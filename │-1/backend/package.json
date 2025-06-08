@@ -1,0 +1,19 @@
+{
+  "name": "bisao-transportes",
+  "version": "1.0.0",
+  "description": "Projeto de transporte",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.10.9"
+  },
+  "devDependencies": {
+    "mocha": "^8.2.1",
+    "chai": "^4.2.0"
+  },
+  "author": "Seu Nome",
+  "license": "ISC"
+}
