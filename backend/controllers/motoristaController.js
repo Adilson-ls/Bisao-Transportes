@@ -2,9 +2,19 @@
 const Motorista = require('../models/Motorista');
 
 exports.criarMotorista = async (req, res) => {
-  // ...lógica para criar motorista
+  try {
+    const motorista = await Motorista.create(req.body);
+    res.status(201).json(motorista);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 exports.listarMotoristas = async (req, res) => {
-  // ...lógica para listar motoristas
+  try {
+    const motoristas = await Motorista.findAll();
+    res.json(motoristas);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

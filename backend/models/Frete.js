@@ -1,11 +1,12 @@
-// Modelo de Frete usando Mongoose
-const mongoose = require('mongoose');
+// Modelo de Frete usando Sequelize
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db.postgres');
 
-const FreteSchema = new mongoose.Schema({
-  origem: { type: String, required: true },
-  destino: { type: String, required: true },
-  valor: { type: Number, required: true },
+const Frete = sequelize.define('Frete', {
+  origem: { type: DataTypes.STRING, allowNull: false },
+  destino: { type: DataTypes.STRING, allowNull: false },
+  valor: { type: DataTypes.FLOAT, allowNull: false },
   // ...outros campos
 });
 
-module.exports = mongoose.model('Frete', FreteSchema);
+module.exports = Frete;

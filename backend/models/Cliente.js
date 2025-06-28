@@ -1,10 +1,11 @@
-// Modelo de Cliente usando Mongoose
-const mongoose = require('mongoose');
+// Modelo de Cliente usando Sequelize
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db.postgres');
 
-const ClienteSchema = new mongoose.Schema({
-  nome: { type: String, required: true },
-  email: { type: String, required: true },
+const Cliente = sequelize.define('Cliente', {
+  nome: { type: DataTypes.STRING, allowNull: false },
+  email: { type: DataTypes.STRING, allowNull: false },
   // ...outros campos
 });
 
-module.exports = mongoose.model('Cliente', ClienteSchema);
+module.exports = Cliente;

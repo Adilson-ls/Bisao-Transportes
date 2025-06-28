@@ -1,10 +1,11 @@
-// Modelo de Motorista usando Mongoose
-const mongoose = require('mongoose');
+// Modelo de Motorista usando Sequelize
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db.postgres');
 
-const MotoristaSchema = new mongoose.Schema({
-  nome: { type: String, required: true },
-  cnh: { type: String, required: true },
+const Motorista = sequelize.define('Motorista', {
+  nome: { type: DataTypes.STRING, allowNull: false },
+  cnh: { type: DataTypes.STRING, allowNull: false },
   // ...outros campos
 });
 
-module.exports = mongoose.model('Motorista', MotoristaSchema);
+module.exports = Motorista;

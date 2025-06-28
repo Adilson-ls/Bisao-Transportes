@@ -1,6 +1,6 @@
 // Ponto de entrada do servidor
 const express = require('express');
-const connectDB = require('./config/db');
+const { connectDB, sequelize } = require('./config/db.postgres');
 
 const app = express();
 app.use(express.json());
@@ -21,7 +21,9 @@ app.use('/fretes', freteRoutes);
 
 const PORT = process.env.PORT || 3001;
 
-connectDB().then(() => {
+connectDB().then(async () => {
+  // Sincroniza os modelos com o banco de dados
+  await sequelize.sync();
   app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
   });
