@@ -1,0 +1,625 @@
+Com certeza! Vamos reescrever o plano e os trechos de código para usar o Vite como sua ferramenta de build, o que geralmente resulta em tempos de inicialização e recarregamento mais rápidos em comparação com o Create React App.
+Website Plan: Bisão Transportes (React.js - Com Vite, Sem TypeScript)
+Objetivo: Criar um site moderno, funcional e fácil de usar para a "Bisão Transportes" a fim de exibir seus serviços e fornecer informações de contato, utilizando Vite.
+Principais Recursos:
+ * Seção Inicial (Home): Seção hero atraente com uma chamada para ação.
+ * Seção de Serviços: Lista clara de todos os serviços oferecidos.
+ * Seção Sobre Nós: Breve introdução da empresa.
+ * Seção de Contato: Maneira fácil para os usuários entrarem em contato.
+ * Design Responsivo: Funciona bem em desktops, tablets e celulares.
+ * Interface do Usuário Moderna: Design visual limpo e atraente.
+Pilha de Tecnologia:
+ * React.js: Para a interface do usuário.
+ * Vite: Ferramenta de build e servidor de desenvolvimento.
+ * CSS Modules: Para estilização (recomendado para manter os estilos encapsulados por componente).
+ * React Router Dom: Para navegação (se desejar várias páginas, caso contrário, um aplicativo de página única com seções de rolagem).
+Estrutura do Projeto (Exemplo com Vite)
+bisao-transportes-website/
+├── public/
+│   └── bisao-logo.png
+│   └── van-hero.png
+│   └── delivery-man.png
+│   └── phone.svg
+│   └── whatsapp.svg
+├── src/
+│   ├── components/
+│   │   ├── Navbar/
+│   │   │   ├── Navbar.jsx
+│   │   │   └── Navbar.module.css
+│   │   ├── Hero/
+│   │   │   ├── Hero.jsx
+│   │   │   └── Hero.module.css
+│   │   ├── Services/
+│   │   │   ├── Services.jsx
+│   │   │   └── Services.module.css
+│   │   ├── About/
+│   │   │   ├── About.jsx
+│   │   │   └── About.module.css
+│   │   ├── Contact/
+│   │   │   ├── Contact.jsx
+│   │   │   └── Contact.module.css
+│   │   ├── Footer/
+│   │   │   ├── Footer.jsx
+│   │   │   └── Footer.module.css
+│   ├── App.jsx
+│   ├── main.jsx (substitui index.js)
+│   ├── index.css (estilos globais)
+├── index.html (arquivo HTML principal do Vite)
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── vite.config.js
+
+Observações sobre a estrutura com Vite:
+ * index.html na raiz: O Vite usa o index.html na raiz do projeto como seu ponto de entrada.
+ * main.jsx (ou main.js): Este é o novo ponto de entrada para a aplicação React.
+ * Arquivos estáticos em public/: O Vite serve os arquivos da pasta public diretamente na raiz. Isso significa que você pode referenciá-los diretamente no seu código sem precisar importá-los (ex: /bisao-logo.png). Isso simplifica a importação de imagens em comparação com o Create React App, onde você precisava importar imagens como módulos.
+ * Extensão .jsx (opcional mas comum): Embora não seja TypeScript, usar .jsx para arquivos que contêm JSX é uma convenção comum e pode ajudar alguns editores/ferramentas a entenderem o conteúdo.
+Core Components & Code Snippets (Adaptado para Vite)
+Vamos ajustar os caminhos de importação das imagens e o ponto de entrada principal.
+1. index.html (Na raiz do projeto)
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bisão Transportes</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+2. vite.config.js (Na raiz do projeto)
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+});
+
+3. src/main.jsx (Novo ponto de entrada da aplicação)
+Este arquivo substitui o index.js e usa a nova API de cliente do React 18.
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx'; // Note a extensão .jsx
+import './index.css'; // Seus estilos globais
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
+
+4. src/App.jsx (Componente Principal da Aplicação)
+Não há grandes mudanças aqui, pois as importações de componentes internos permanecem as mesmas.
+import React from 'react';
+import Navbar from './components/Navbar/Navbar';
+import Hero from './components/Hero/Hero';
+import Services from './components/Services/Services';
+import About from './components/About/About';
+import Contact from './components/Contact/Contact';
+import Footer from './components/Footer/Footer';
+
+import './App.css'; // Para estilos globais do aplicativo (se houver)
+
+function App() {
+  return (
+    <div className="App">
+      <Navbar />
+      <Hero />
+      <Services />
+      <About />
+      <Contact />
+      <Footer />
+    </div>
+  );
+}
+
+export default App;
+
+5. src/components/Navbar/Navbar.jsx
+A principal mudança aqui é como você referenciará as imagens. Em vez de importá-las, você pode referenciá-las diretamente do diretório public/ usando um caminho absoluto.
+import React from 'react';
+import styles from './Navbar.module.css';
+
+// Para o Vite, se a imagem estiver em public/, você pode referenciá-la diretamente
+// Ex: /bisao-logo.png se estiver em public/bisao-logo.png
+function Navbar() {
+  return (
+    <nav className={styles.navbar}>
+      <div className={styles.logo}>
+        <img src="/bisao-logo.png" alt="Logotipo Bisão Transportes" />
+      </div>
+      <ul className={styles.navLinks}>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#services">Serviços</a></li>
+        <li><a href="#about">Sobre Nós</a></li>
+        <li><a href="#contact">Contato</a></li>
+      </ul>
+      <div className={styles.contactInfo}>
+        <span>(+351) 930 460 509</span> {/* Da imagem */}
+      </div>
+    </nav>
+  );
+}
+
+export default Navbar;
+
+src/components/Navbar/Navbar.module.css (Sem mudanças, CSS Modules funciona da mesma forma)
+/* ... (mesmo código CSS de antes) ... */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #333;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo img {
+  height: 50px;
+}
+
+.navLinks {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navLinks li {
+  margin-left: 2rem;
+}
+
+.navLinks a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.navLinks a:hover {
+  color: #f0a500;
+}
+
+.contactInfo span {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+  .contactInfo {
+    margin-left: auto;
+  }
+}
+
+6. src/components/Hero/Hero.jsx
+Novamente, as imagens são referenciadas diretamente da pasta public/.
+import React from 'react';
+import styles from './Hero.module.css';
+
+function Hero() {
+  return (
+    <section id="home" className={styles.hero}>
+      <div className={styles.heroContent}>
+        <h1>Mudança ou frete rápido?</h1>
+        <p>Serviços de transporte nacional e internacional com agilidade e segurança.</p>
+        <button className={styles.primaryButton}>Solicite um Orçamento Gratuito</button>
+      </div>
+      <div className={styles.heroImages}>
+        <img src="/van-hero.png" alt="Van de Transporte" className={styles.vanImage} />
+        <img src="/delivery-man.png" alt="Entregador" className={styles.deliveryManImage} />
+      </div>
+    </section>
+  );
+}
+
+export default Hero;
+
+src/components/Hero/Hero.module.css (Sem mudanças)
+/* ... (mesmo código CSS de antes) ... */
+.hero {
+  background-color: #6a4f41;
+  color: white;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 80vh;
+}
+
+.heroContent {
+  z-index: 2;
+  margin-bottom: 2rem;
+}
+
+.heroContent h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.heroContent p {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.primaryButton {
+  background-color: #f0a500;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.primaryButton:hover {
+  background-color: #d49000;
+}
+
+.heroImages {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  z-index: 1;
+}
+
+.vanImage {
+  width: 600px;
+  height: auto;
+  margin-right: -100px;
+  transform: translateX(100px);
+  animation: slideInVan 1s forwards;
+}
+
+.deliveryManImage {
+  width: 250px;
+  height: auto;
+  transform: translateX(100px);
+  animation: slideInMan 1.2s forwards 0.3s;
+}
+
+@keyframes slideInVan {
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInMan {
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: 769px) {
+  .hero {
+    flex-direction: row;
+    justify-content: space-around;
+    text-align: left;
+  }
+
+  .heroContent {
+    max-width: 50%;
+    margin-right: 2rem;
+  }
+
+  .heroImages {
+    position: relative;
+    transform: none;
+    right: auto;
+    bottom: auto;
+    display: block;
+    margin-left: 2rem;
+  }
+
+  .vanImage, .deliveryManImage {
+    animation: none;
+    transform: none;
+    margin-right: 0;
+  }
+  .vanImage {
+    width: 100%;
+    max-width: 700px;
+  }
+  .deliveryManImage {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroContent h1 {
+    font-size: 2.5rem;
+  }
+  .heroContent p {
+    font-size: 1rem;
+  }
+  .heroImages {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 2rem;
+  }
+  .vanImage {
+    width: 80%;
+    max-width: 400px;
+    margin-right: 0;
+    transform: translateX(0);
+    animation: none;
+  }
+  .deliveryManImage {
+    width: 30%;
+    max-width: 150px;
+    position: absolute;
+    bottom: 0;
+    right: 10%;
+    transform: translateX(0);
+    animation: none;
+  }
+}
+
+7. src/components/Services/Services.jsx (Sem mudanças)
+import React from 'react';
+import styles from './Services.module.css';
+
+function Services() {
+  const servicesList = [
+    "Nacional e internacional",
+    "Mudanças residenciais",
+    "Mudanças comerciais",
+    "Recolhas em lojas",
+    "Transportes de bens"
+  ];
+
+  return (
+    <section id="services" className={styles.services}>
+      <h2>Nossos Serviços</h2>
+      <div className={styles.servicesGrid}>
+        {servicesList.map((service, index) => (
+          <div key={index} className={styles.serviceItem}>
+            <p>{service}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export default Services;
+
+src/components/Services/Services.module.css (Sem mudanças)
+/* ... (mesmo código CSS de antes) ... */
+.services {
+  padding: 4rem 2rem;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.services h2 {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #333;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.serviceItem {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.serviceItem:hover {
+  transform: translateY(-5px);
+}
+
+.serviceItem p {
+  font-size: 1.2rem;
+  color: #555;
+  font-weight: bold;
+}
+
+8. src/components/Contact/Contact.jsx
+As referências aos ícones também são alteradas para usar o caminho direto da pasta public/.
+import React from 'react';
+import styles from './Contact.module.css';
+
+function Contact() {
+  return (
+    <section id="contact" className={styles.contact}>
+      <h2>Fale Conosco</h2>
+      <p className={styles.subtitle}>Orçamento gratuito:</p>
+      <div className={styles.contactInfo}>
+        <a href="tel:+351930460509" className={styles.contactLink}>
+          <img src="/phone.svg" alt="Telefone" className={styles.icon} />
+          <span>(+351) 930 460 509</span>
+        </a>
+        <a href="https://wa.me/351930460509" target="_blank" rel="noopener noreferrer" className={styles.contactLink}>
+          <img src="/whatsapp.svg" alt="WhatsApp" className={styles.icon} />
+          <span>WhatsApp</span>
+        </a>
+      </div>
+      <p className={styles.cta}>Estamos prontos para atender suas necessidades de transporte.</p>
+    </section>
+  );
+}
+
+export default Contact;
+
+src/components/Contact/Contact.module.css (Sem mudanças)
+/* ... (mesmo código CSS de antes) ... */
+.contact {
+  background-color: #6a4f41;
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.contact h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+}
+
+.contactInfo {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.contactLink {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-size: 1.8rem;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.contactLink:hover {
+  color: #f0a500;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  filter: invert(1);
+}
+
+.cta {
+  font-size: 1.3rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .contactLink {
+    font-size: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+  }
+  .icon {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+}
+
+9. src/components/Footer/Footer.jsx (Sem mudanças)
+import React from 'react';
+import styles from './Footer.module.css';
+
+function Footer() {
+  return (
+    <footer className={styles.footer}>
+      <p>&copy; {new Date().getFullYear()} Bisão Transportes. Todos os direitos reservados.</p>
+    </footer>
+  );
+}
+
+export default Footer;
+
+src/components/Footer/Footer.module.css (Sem mudanças)
+/* ... (mesmo código CSS de antes) ... */
+.footer {
+  background-color: #222;
+  color: white;
+  text-align: center;
+  padding: 1.5rem 2rem;
+  font-size: 0.9rem;
+}
+
+10. src/index.css (Estilos Globais)
+/* ... (mesmo código CSS de antes) ... */
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+Instruções de Configuração com Vite
+ * Crie um novo projeto React com Vite:
+   npm create vite@latest bisao-transportes-website -- --template react
+cd bisao-transportes-website
+
+   Isso criará um projeto Vite com o template React, já configurado.
+ * Instale as dependências:
+   npm install
+
+ * Remova arquivos de exemplo desnecessários:
+   * src/assets/react.svg
+   * src/App.css (se você for usar App.css para estilos globais, pode mantê-lo, mas é comum ter um index.css ou similar)
+   * Remova o conteúdo padrão de src/App.jsx e src/main.jsx (vamos substituí-lo).
+ * Crie as pastas:
+   * Crie a pasta src/components e suas subpastas (Navbar, Hero, Services, About, Contact, Footer).
+   * Mova as imagens e ícones para a pasta public/ diretamente. Ex: public/bisao-logo.png, public/van-hero.png, public/delivery-man.png, public/phone.svg, public/whatsapp.svg.
+ * Copie o Código dos Componentes:
+   * Substitua o conteúdo de src/main.jsx pelo código fornecido acima.
+   * Substitua o conteúdo de src/App.jsx pelo código fornecido acima.
+   * Copie os arquivos .jsx e .module.css para suas respectivas localizações dentro de src/components/.
+ * Crie o vite.config.js: Se ele não foi criado automaticamente ou se você o excluiu, crie-o na raiz do projeto com o conteúdo fornecido acima.
+ * Verifique index.html: Certifique-se de que seu index.html na raiz do projeto corresponde ao exemplo fornecido, especialmente a linha <script type="module" src="/src/main.jsx"></script>.
+ * Execute o aplicativo:
+   npm run dev
+
+   O Vite iniciará um servidor de desenvolvimento, e você poderá acessar seu site no navegador, geralmente em http://localhost:5173/ (ou outra porta disponível).
+Benefícios do Vite para este Projeto:
+ * Desenvolvimento Mais Rápido: O Vite usa módulos ES nativos para servir seu código-fonte, resultando em inicializações e recarregamentos "quase instantâneos".
+ * Configuração Simples: A configuração padrão do Vite para React é minimalista e eficaz.
+ * Otimização de Build: O Vite usa Rollup para a build de produção, que é altamente otimizada.
+ * Gerenciamento de Ativos Simplificado: Colocar ativos diretamente em public/ e referenciá-los com / é muito intuitivo.
+Este setup com Vite é mais moderno e eficiente para projetos React.
