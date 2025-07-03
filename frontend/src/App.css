@@ -71,7 +71,9 @@ html {
 }
 
 .modal-content {
-  @apply bg-white rounded-lg p-6 max-w-md w-full max-h-90vh overflow-y-auto shadow-2xl;
+  @apply bg-white rounded-lg p-6 max-w-md w-full shadow-2xl;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Custom hero section */
