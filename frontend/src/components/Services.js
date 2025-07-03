@@ -1,39 +1,8 @@
 import React from 'react';
 import ServiceCard from './ServiceCard';
+import { SERVICE_TYPES } from '../constants';
 
 const Services = () => {
-  const services = [
-    {
-      icon: '🏠',
-      title: 'Mudanças Residenciais',
-      description: 'Mudanças completas para casas e apartamentos com toda segurança e cuidado.'
-    },
-    {
-      icon: '🏢',
-      title: 'Mudanças Comerciais',
-      description: 'Relocação de escritórios e empresas com mínimo impacto nas suas atividades.'
-    },
-    {
-      icon: '🚚',
-      title: 'Frete Rápido',
-      description: 'Transporte rápido e seguro de mercadorias e bens diversos.'
-    },
-    {
-      icon: '🌍',
-      title: 'Transporte Internacional',
-      description: 'Mudanças e transportes para toda a Europa com documentação completa.'
-    },
-    {
-      icon: '🏪',
-      title: 'Recolhas em Lojas',
-      description: 'Coleta de compras em lojas e entrega direta no seu endereço.'
-    },
-    {
-      icon: '📦',
-      title: 'Transporte de Bens',
-      description: 'Transporte seguro de móveis, eletrodomésticos e objetos especiais.'
-    }
-  ];
 
   return (
     <section id="services" className="py-20 bg-gray-50">
