@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_CONFIG, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../constants';
 
 export const useQuote = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -9,7 +10,7 @@ export const useQuote = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/quote`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.QUOTES}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -18,16 +19,16 @@ export const useQuote = () => {
       });
       
       if (response.ok) {
-        alert('Orçamento solicitado com sucesso! Entraremos em contato em breve.');
+        alert(SUCCESS_MESSAGES.QUOTE_SUBMITTED);
         return true;
       } else {
         const errorData = await response.json();
-        setError(errorData.detail || 'Erro ao enviar solicitação. Tente novamente.');
+        setError(errorData.detail || ERROR_MESSAGES.SERVER_ERROR);
         return false;
       }
     } catch (error) {
       console.error('Error:', error);
-      setError('Erro ao enviar solicitação. Verifique sua conexão e tente novamente.');
+      setError(ERROR_MESSAGES.NETWORK_ERROR);
       return false;
     } finally {
       setIsLoading(false);
