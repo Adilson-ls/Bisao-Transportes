@@ -122,15 +122,18 @@ backend:
   
   - task: "Database Connection"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "MongoDB connection established with quotes collection for storing quote requests"
+      - working: true
+        agent: "testing"
+        comment: "Database connection is working correctly. Successfully tested connection to MongoDB by submitting and retrieving quotes. Data persistence is confirmed with proper storage and retrieval of quote information."
   
   - task: "Health Check API"
     implemented: true
