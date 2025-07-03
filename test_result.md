@@ -288,3 +288,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Implementado site completo da Bisão Transportes com React + FastAPI + MongoDB. Todos os endpoints backend precisam ser testados. Frontend implementado com design profissional e funcionalidades completas."
+  - agent: "testing"
+    message: "Testei todos os endpoints backend da Bisão Transportes. Criei um arquivo backend_test.py para testar todas as APIs. Todos os endpoints estão funcionando corretamente, incluindo validação de dados e conexão com MongoDB. As APIs retornam os dados esperados e respondem com os códigos HTTP apropriados. Não foram encontrados problemas críticos."
