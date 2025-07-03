@@ -1,0 +1,151 @@
+.hero {
+  background-color: #6a4f41;
+  color: white;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 80vh;
+}
+
+.heroContent {
+  z-index: 2;
+  margin-bottom: 2rem;
+}
+
+.heroContent h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.heroContent p {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.primaryButton {
+  background-color: #f0a500;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.primaryButton:hover {
+  background-color: #d49000;
+}
+
+.heroImages {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  z-index: 1;
+}
+
+.vanImage {
+  width: 600px;
+  height: auto;
+  margin-right: -100px;
+  transform: translateX(100px);
+  animation: slideInVan 1s forwards;
+}
+
+.deliveryManImage {
+  width: 250px;
+  height: auto;
+  transform: translateX(100px);
+  animation: slideInMan 1.2s forwards 0.3s;
+}
+
+@keyframes slideInVan {
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInMan {
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: 769px) {
+  .hero {
+    flex-direction: row;
+    justify-content: space-around;
+    text-align: left;
+  }
+
+  .heroContent {
+    max-width: 50%;
+    margin-right: 2rem;
+  }
+
+  .heroImages {
+    position: relative;
+    transform: none;
+    right: auto;
+    bottom: auto;
+    display: block;
+    margin-left: 2rem;
+  }
+
+  .vanImage, .deliveryManImage {
+    animation: none;
+    transform: none;
+    margin-right: 0;
+  }
+  .vanImage {
+    width: 100%;
+    max-width: 700px;
+  }
+  .deliveryManImage {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroContent h1 {
+    font-size: 2.5rem;
+  }
+  .heroContent p {
+    font-size: 1rem;
+  }
+  .heroImages {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 2rem;
+  }
+  .vanImage {
+    width: 80%;
+    max-width: 400px;
+    margin-right: 0;
+    transform: translateX(0);
+    animation: none;
+  }
+  .deliveryManImage {
+    width: 30%;
+    max-width: 150px;
+    position: absolute;
+    bottom: 0;
+    right: 10%;
+    transform: translateX(0);
+    animation: none;
+  }
+}
