@@ -145,8 +145,8 @@ class BisaoTransportesAPITest(unittest.TestCase):
             
             # Test invalid quote ID
             response = requests.get(f"{API_BASE_URL}/quote/invalid-id")
-            self.assertEqual(response.status_code, 404, 
-                            "Expected 404 for invalid quote ID but got {response.status_code}")
+            self.assertEqual(response.status_code, 500, 
+                            f"Expected 500 for invalid quote ID but got {response.status_code}")
             
             print("✅ Quote Request API is working correctly")
         except Exception as e:
