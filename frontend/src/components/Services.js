@@ -1,6 +1,5 @@
 import React from 'react';
 import ServiceCard from './ServiceCard';
-import { SERVICE_TYPES } from '../constants';
 
 const Services = () => {
   const services = [
