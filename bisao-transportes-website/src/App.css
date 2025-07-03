@@ -1,0 +1,7 @@
+/* Estilos globais opcionais para o App */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: none;
+}
