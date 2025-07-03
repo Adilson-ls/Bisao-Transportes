@@ -1,75 +1,225 @@
-from fastapi import FastAPI, APIRouter
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, EmailStr
+from pymongo import MongoClient
+from typing import Optional, List
 import os
-import logging
-from pathlib import Path
-from pydantic import BaseModel, Field
-from typing import List
-import uuid
 from datetime import datetime
+import uuid
+from bson import ObjectId
+import json
 
-
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
-
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
-
-# Create the main app without a prefix
+# Initialize FastAPI app
 app = FastAPI()
 
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
-
-
-# Define Models
-class StatusCheck(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
-
-# Include the router in the main app
-app.include_router(api_router)
-
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# Database connection
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
+client = MongoClient(MONGO_URL)
+db = client.bisao_transportes
 
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
+# Pydantic models
+class ContactForm(BaseModel):
+    name: str
+    email: EmailStr
+    phone: str
+    service: str
+    message: str
+    origin: Optional[str] = ""
+    destination: Optional[str] = ""
+
+class QuoteRequest(BaseModel):
+    name: str
+    email: EmailStr
+    phone: str
+    service: str
+    origin: str
+    destination: str
+    date: str
+    details: str
+
+class Testimonial(BaseModel):
+    name: str
+    rating: int
+    message: str
+    service: str
+
+# Custom JSON encoder for MongoDB ObjectId
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        return super().default(obj)
+
+# API Routes
+@app.get("/api/")
+async def root():
+    return {"message": "Bisão Transportes API"}
+
+@app.post("/api/contact")
+async def submit_contact(contact: ContactForm):
+    try:
+        contact_data = contact.dict()
+        contact_data['created_at'] = datetime.utcnow()
+        contact_data['id'] = str(uuid.uuid4())
+        
+        result = db.contacts.insert_one(contact_data)
+        
+        return {
+            "success": True,
+            "message": "Mensagem enviada com sucesso! Entraremos em contato em breve.",
+            "id": contact_data['id']
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao enviar mensagem: {str(e)}")
+
+@app.post("/api/quote")
+async def submit_quote(quote: QuoteRequest):
+    try:
+        quote_data = quote.dict()
+        quote_data['created_at'] = datetime.utcnow()
+        quote_data['id'] = str(uuid.uuid4())
+        quote_data['status'] = 'pending'
+        
+        result = db.quotes.insert_one(quote_data)
+        
+        return {
+            "success": True,
+            "message": "Pedido de orçamento enviado! Receberá uma resposta em breve.",
+            "id": quote_data['id']
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao enviar orçamento: {str(e)}")
+
+@app.get("/api/testimonials")
+async def get_testimonials():
+    try:
+        testimonials = list(db.testimonials.find().sort("created_at", -1).limit(10))
+        
+        # Convert ObjectId to string for JSON serialization
+        for testimonial in testimonials:
+            testimonial['_id'] = str(testimonial['_id'])
+            
+        return {"testimonials": testimonials}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao buscar depoimentos: {str(e)}")
+
+@app.post("/api/testimonials")
+async def add_testimonial(testimonial: Testimonial):
+    try:
+        testimonial_data = testimonial.dict()
+        testimonial_data['created_at'] = datetime.utcnow()
+        testimonial_data['id'] = str(uuid.uuid4())
+        testimonial_data['approved'] = False
+        
+        result = db.testimonials.insert_one(testimonial_data)
+        
+        return {
+            "success": True,
+            "message": "Depoimento enviado! Será publicado após aprovação.",
+            "id": testimonial_data['id']
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao enviar depoimento: {str(e)}")
+
+@app.get("/api/services")
+async def get_services():
+    services = [
+        {
+            "id": "mudancas-residenciais",
+            "title": "Mudanças Residenciais",
+            "description": "Mudanças completas para residências com equipe especializada",
+            "icon": "🏠",
+            "features": ["Embalagem profissional", "Transporte seguro", "Montagem de móveis"]
+        },
+        {
+            "id": "mudancas-comerciais",
+            "title": "Mudanças Comerciais",
+            "description": "Mudanças para escritórios e estabelecimentos comerciais",
+            "icon": "🏢",
+            "features": ["Horário flexível", "Mínimo downtime", "Equipamentos especializados"]
+        },
+        {
+            "id": "transporte-mercadorias",
+            "title": "Transporte de Mercadorias",
+            "description": "Transporte de cargas e mercadorias com segurança",
+            "icon": "🚛",
+            "features": ["Nacional e internacional", "Rastreamento", "Seguro incluso"]
+        },
+        {
+            "id": "recolhas-lojas",
+            "title": "Recolhas em Lojas",
+            "description": "Recolha de compras em lojas e entregas ao domicílio",
+            "icon": "🛒",
+            "features": ["Agenda flexível", "Cuidado especial", "Entrega rápida"]
+        }
+    ]
+    
+    return {"services": services}
+
+@app.get("/api/stats")
+async def get_stats():
+    try:
+        total_contacts = db.contacts.count_documents({})
+        total_quotes = db.quotes.count_documents({})
+        total_testimonials = db.testimonials.count_documents({"approved": True})
+        
+        return {
+            "total_contacts": total_contacts,
+            "total_quotes": total_quotes,
+            "total_testimonials": total_testimonials,
+            "years_experience": 10,
+            "satisfied_clients": 500
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao buscar estatísticas: {str(e)}")
+
+# Initialize some sample data
+@app.on_event("startup")
+async def startup_event():
+    # Add some sample testimonials if none exist
+    if db.testimonials.count_documents({}) == 0:
+        sample_testimonials = [
+            {
+                "name": "Maria Silva",
+                "rating": 5,
+                "message": "Excelente serviço! Equipe muito profissional e cuidadosa com os meus móveis.",
+                "service": "Mudanças Residenciais",
+                "approved": True,
+                "created_at": datetime.utcnow(),
+                "id": str(uuid.uuid4())
+            },
+            {
+                "name": "João Santos",
+                "rating": 5,
+                "message": "Recomendo muito! Fizeram a mudança do meu escritório sem problemas.",
+                "service": "Mudanças Comerciais",
+                "approved": True,
+                "created_at": datetime.utcnow(),
+                "id": str(uuid.uuid4())
+            },
+            {
+                "name": "Ana Costa",
+                "rating": 4,
+                "message": "Pontuais e eficientes. Muito satisfeita com o serviço.",
+                "service": "Transporte de Mercadorias",
+                "approved": True,
+                "created_at": datetime.utcnow(),
+                "id": str(uuid.uuid4())
+            }
+        ]
+        
+        db.testimonials.insert_many(sample_testimonials)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)
